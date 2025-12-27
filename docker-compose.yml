@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      # Mount the template.csv from the generator project
+      - ../shift-calendar-generator/template.csv:/generator/template.csv:ro
+      # Mount the generator.py module
+      - ../shift-calendar-generator/generator.py:/generator/generator.py:ro
+    environment:
+      - TEMPLATE_FILE=/generator/template.csv
+      - GENERATOR_PATH=/generator
+    restart: unless-stopped

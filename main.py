@@ -1,11 +1,13 @@
 import sys
+import os
 import datetime
 from pathlib import Path
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
 
-# Add parent directory to path to import from shift-calendar-generator
-sys.path.insert(0, str(Path(__file__).parent.parent / "shift-calendar-generator"))
+# Add generator module to path
+generator_path = os.getenv("GENERATOR_PATH", str(Path(__file__).parent.parent / "shift-calendar-generator"))
+sys.path.insert(0, generator_path)
 import generator
 
 app = FastAPI(
@@ -14,8 +16,8 @@ app = FastAPI(
     version="0.1.0"
 )
 
-# Path to the template file in the generator project
-TEMPLATE_FILE = str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv")
+# Path to the template file
+TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
 
 # Mount static files
 app.mount("/", StaticFiles(directory=str(Path(__file__).parent / "static"), html=True), name="static")
