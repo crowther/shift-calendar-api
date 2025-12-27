@@ -19,9 +19,6 @@ app = FastAPI(
 # Path to the template file
 TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
 
-# Mount static files
-app.mount("/", StaticFiles(directory=str(Path(__file__).parent / "static"), html=True), name="static")
-
 # Default date range: today to 52 weeks out
 def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     today = datetime.date.today()
@@ -125,3 +122,6 @@ def get_custom_calendar(shift_numbers: str):
 def health_check():
     """Health check endpoint"""
     return {"status": "healthy"}
+
+# Mount static files - must be last so it doesn't override API routes
+app.mount("/", StaticFiles(directory=str(Path(__file__).parent / "static"), html=True), name="static")
