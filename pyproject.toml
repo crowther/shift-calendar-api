@@ -1,0 +1,11 @@
+[project]
+name = "shift-calendar-api"
+version = "0.1.0"
+description = "FastAPI backend for shift calendar subscriptions"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "fastapi>=0.127.1",
+    "icalendar>=6.3.2",
+    "uvicorn>=0.34.0",
+]
