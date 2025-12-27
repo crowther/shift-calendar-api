@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Shift Calendar Subscriptions</title>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-tertiary: #1f2937;
+            --text-primary: #e6edf3;
+            --text-secondary: #8b949e;
+            --accent-primary: #58a6ff;
+            --accent-secondary: #1f6feb;
+            --accent-hover: #79c0ff;
+            --border-color: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            line-height: 1.7;
+        }
+
+        h1 {
+            color: var(--text-primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h2 {
+            color: var(--text-primary);
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-top: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        h3 {
+            color: var(--accent-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-link {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            transition: all 0.2s ease;
+        }
+
+        .calendar-link:hover {
+            border-color: var(--accent-primary);
+            background: var(--bg-tertiary);
+        }
+
+        .calendar-link p {
+            margin-bottom: 0.5rem;
+        }
+
+        .calendar-link p:last-of-type {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        a {
+            color: var(--accent-primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: var(--accent-hover);
+            text-decoration: underline;
+        }
+
+        .custom-checkboxes {
+            list-style: none;
+            padding-left: 0;
+            margin: 1rem 0;
+        }
+
+        .custom-checkboxes li {
+            margin: 0.75rem 0;
+            color: var(--text-primary);
+        }
+
+        .custom-checkboxes input[type="checkbox"] {
+            margin-right: 0.75rem;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-primary);
+        }
+
+        .custom-checkboxes label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        #custom-url {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+            word-break: break-all;
+            border: 1px solid var(--border-color);
+        }
+
+        #custom-url strong {
+            color: var(--accent-primary);
+        }
+
+        ul {
+            color: var(--text-secondary);
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        ul li {
+            margin: 0.5rem 0;
+        }
+
+        strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .url-box {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 0.75rem;
+            margin: 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .url-box a {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--accent-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+
+        .copy-btn.copied {
+            background: var(--accent-primary);
+            color: white;
+            border-color: var(--accent-primary);
+        }
+    </style>
+</head>
+<body>
+    <h1>Shift Calendar Subscriptions</h1>
+    <p>Subscribe to these calendars in your favorite calendar application (Google Calendar, Apple Calendar, Outlook, etc.)</p>
+
+    <div class="calendar-link">
+        <h3>All Shifts</h3>
+        <p>Includes all 5 shifts combined</p>
+        <div class="url-box">
+            <a href="/calendars/all_shifts.ics" class="calendar-url">/calendars/all_shifts.ics</a>
+            <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+        </div>
+    </div>
+
+    <div class="calendar-link">
+        <h3>Shift 1</h3>
+        <div class="url-box">
+            <a href="/calendars/shift1.ics" class="calendar-url">/calendars/shift1.ics</a>
+            <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+        </div>
+    </div>
+
+    <div class="calendar-link">
+        <h3>Shift 2</h3>
+        <div class="url-box">
+            <a href="/calendars/shift2.ics" class="calendar-url">/calendars/shift2.ics</a>
+            <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+        </div>
+    </div>
+
+    <div class="calendar-link">
+        <h3>Shift 3</h3>
+        <div class="url-box">
+            <a href="/calendars/shift3.ics" class="calendar-url">/calendars/shift3.ics</a>
+            <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+        </div>
+    </div>
+
+    <div class="calendar-link">
+        <h3>Shift 4</h3>
+        <div class="url-box">
+            <a href="/calendars/shift4.ics" class="calendar-url">/calendars/shift4.ics</a>
+            <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+        </div>
+    </div>
+
+    <div class="calendar-link">
+        <h3>Shift 5</h3>
+        <div class="url-box">
+            <a href="/calendars/shift5.ics" class="calendar-url">/calendars/shift5.ics</a>
+            <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+        </div>
+    </div>
+
+    <div class="calendar-link">
+        <h3>Custom</h3>
+        <p>Create your own custom calendar by combining multiple shifts into a single calendar</p>
+        <ul class="custom-checkboxes">
+            <li><label><input type="checkbox" value="1" checked> Shift 1</label></li>
+            <li><label><input type="checkbox" value="2" checked> Shift 2</label></li>
+            <li><label><input type="checkbox" value="3" checked> Shift 3</label></li>
+            <li><label><input type="checkbox" value="4" checked> Shift 4</label></li>
+            <li><label><input type="checkbox" value="5" checked> Shift 5</label></li>
+        </ul>
+        <button class="generate-btn" onclick="generateCustomCalendar()">Generate Custom Calendar</button>
+        <div id="custom-url"></div>
+    </div>
+
+    <h2>How to Subscribe</h2>
+    <ul>
+        <li><strong>Google Calendar:</strong> Settings → Add calendar → From URL</li>
+        <li><strong>Apple Calendar:</strong> File → New Calendar Subscription</li>
+        <li><strong>Outlook:</strong> Add calendar → Subscribe from web</li>
+    </ul>
+
+    <script>
+        // Get base URL dynamically
+        const baseUrl = window.location.origin;
+
+        // Update all calendar URLs with full absolute URLs
+        document.querySelectorAll('.calendar-url').forEach(link => {
+            const fullUrl = baseUrl + link.getAttribute('href');
+            link.textContent = fullUrl;
+            link.href = fullUrl;
+        });
+
+        function copyUrl(button) {
+            const urlBox = button.closest('.url-box');
+            const link = urlBox.querySelector('a');
+            const url = link.href;
+
+            navigator.clipboard.writeText(url).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy URL');
+            });
+        }
+
+        function generateCustomCalendar() {
+            const checkboxes = document.querySelectorAll('.custom-checkboxes input[type="checkbox"]:checked');
+            const selectedShifts = Array.from(checkboxes).map(cb => cb.value);
+
+            if (selectedShifts.length === 0) {
+                alert('Please select at least one shift');
+                return;
+            }
+
+            const url = `${baseUrl}/calendars/shift${selectedShifts.join(',')}.ics`;
+            const urlDiv = document.getElementById('custom-url');
+            urlDiv.innerHTML = `
+                <strong>Your custom calendar URL:</strong>
+                <div class="url-box">
+                    <a href="${url}">${url}</a>
+                    <button class="copy-btn" onclick="copyUrl(this)">Copy</button>
+                </div>
+            `;
+            urlDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
