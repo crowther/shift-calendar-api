@@ -2,7 +2,8 @@ import sys
 import os
 import datetime
 from pathlib import Path
-from fastapi import FastAPI, Response
+from typing import Optional
+from fastapi import FastAPI, Response, Query
 from fastapi.staticfiles import StaticFiles
 
 # Add generator module to path
@@ -19,22 +20,40 @@ app = FastAPI(
 # Path to the template file
 TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
 
-# Default date range: 52 weeks back to 52 weeks forward
+# Parse date from string (YYYY-MM-DD format)
+def parse_date(date_str: str) -> datetime.date:
+    return datetime.datetime.strptime(date_str, "%Y-%m-%d").date()
+
+# Default date range: 1 year back to 1 year forward
 def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     today = datetime.date.today()
-    past = today - datetime.timedelta(weeks=52)
-    future = today + datetime.timedelta(weeks=52)
+    past = today - datetime.timedelta(days=365)
+    future = today + datetime.timedelta(days=365)
     return past, future
 
 @app.get("/calendars/all_shifts.ics")
-def get_all_shifts():
+def get_all_shifts(
+    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)")
+):
     """Generate calendar with all 5 shifts"""
-    date_from, date_to = get_default_date_range()
+    # Use provided dates or default range
+    if date_from and date_to:
+        try:
+            start_date = parse_date(date_from)
+            end_date = parse_date(date_to)
+        except ValueError:
+            return Response(
+                content="Invalid date format. Use YYYY-MM-DD",
+                status_code=400
+            )
+    else:
+        start_date, end_date = get_default_date_range()
 
     cal = generator.generate_calendar(
         template_file=TEMPLATE_FILE,
-        date_from=date_from,
-        date_to=date_to,
+        date_from=start_date,
+        date_to=end_date,
         selected_shifts=None  # All shifts
     )
 
@@ -48,7 +67,11 @@ def get_all_shifts():
     )
 
 @app.get("/calendars/shift{shift_numbers}.ics")
-def get_shift_calendar(shift_numbers: str):
+def get_shift_calendar(
+    shift_numbers: str,
+    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)")
+):
     """Generate calendar for one or more shifts (e.g., '1' or '1,3,5')"""
     try:
         selected_shifts = {int(s.strip()) for s in shift_numbers.split(',')}
@@ -72,12 +95,23 @@ def get_shift_calendar(shift_numbers: str):
             status_code=400
         )
 
-    date_from, date_to = get_default_date_range()
+    # Use provided dates or default range
+    if date_from and date_to:
+        try:
+            start_date = parse_date(date_from)
+            end_date = parse_date(date_to)
+        except ValueError:
+            return Response(
+                content="Invalid date format. Use YYYY-MM-DD",
+                status_code=400
+            )
+    else:
+        start_date, end_date = get_default_date_range()
 
     cal = generator.generate_calendar(
         template_file=TEMPLATE_FILE,
-        date_from=date_from,
-        date_to=date_to,
+        date_from=start_date,
+        date_to=end_date,
         selected_shifts=selected_shifts
     )
 
