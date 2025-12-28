@@ -19,11 +19,12 @@ app = FastAPI(
 # Path to the template file
 TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
 
-# Default date range: today to 52 weeks out
+# Default date range: 52 weeks back to 52 weeks forward
 def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     today = datetime.date.today()
+    past = today - datetime.timedelta(weeks=52)
     future = today + datetime.timedelta(weeks=52)
-    return today, future
+    return past, future
 
 @app.get("/calendars/all_shifts.ics")
 def get_all_shifts():
@@ -46,36 +47,9 @@ def get_all_shifts():
         }
     )
 
-@app.get("/calendars/shift{shift_number}.ics")
-def get_shift_calendar(shift_number: int):
-    """Generate calendar for a specific shift (1-5)"""
-    if shift_number < 1 or shift_number > 5:
-        return Response(
-            content="Shift number must be between 1 and 5",
-            status_code=400
-        )
-
-    date_from, date_to = get_default_date_range()
-
-    cal = generator.generate_calendar(
-        template_file=TEMPLATE_FILE,
-        date_from=date_from,
-        date_to=date_to,
-        selected_shifts={shift_number}
-    )
-
-    return Response(
-        content=cal.to_ical(),
-        media_type="text/calendar",
-        headers={
-            "Content-Disposition": f"attachment; filename=shift{shift_number}.ics",
-            "Cache-Control": "public, max-age=3600"  # Cache for 1 hour
-        }
-    )
-
 @app.get("/calendars/shift{shift_numbers}.ics")
-def get_custom_calendar(shift_numbers: str):
-    """Generate calendar for custom combination of shifts (e.g., '1,3,5')"""
+def get_shift_calendar(shift_numbers: str):
+    """Generate calendar for one or more shifts (e.g., '1' or '1,3,5')"""
     try:
         selected_shifts = {int(s.strip()) for s in shift_numbers.split(',')}
 
