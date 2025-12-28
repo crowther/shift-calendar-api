@@ -69,7 +69,7 @@ def get_date_range(date_from_str: Optional[str], date_to_str: Optional[str]) -> 
 def get_all_shifts(
     date_from_str: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)", alias="date_from"),
     date_to_str: Optional[str] = Query(None, description="End date (YYYY-MM-DD)", alias="date_to")
-):
+) -> Response:
     """Generate calendar with all 5 shifts"""
     try:
         date_from, date_to = get_date_range(date_from_str, date_to_str)
@@ -100,7 +100,7 @@ def get_shift_calendar(
     shift_numbers: str,
     date_from_str: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)", alias="date_from"),
     date_to_str: Optional[str] = Query(None, description="End date (YYYY-MM-DD)", alias="date_to")
-):
+) -> Response:
     """Generate calendar for one or more shifts (e.g., '1' or '1,3,5')"""
     try:
         selected_shifts = {int(s.strip()) for s in shift_numbers.split(',')}
