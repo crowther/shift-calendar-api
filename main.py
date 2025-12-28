@@ -15,6 +15,9 @@ import generator
 # Path to the template file
 TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
 
+# Maximum date range in days (default: 5 years)
+MAX_DATE_RANGE_DAYS = int(os.getenv("MAX_DATE_RANGE_DAYS", "1825"))
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     if not os.path.exists(TEMPLATE_FILE):
@@ -50,6 +53,11 @@ def get_date_range(date_from_str: Optional[str], date_to_str: Optional[str]) -> 
 
         if date_to < date_from:
             raise ValueError("date_to must be greater than or equal to date_from")
+
+        # Validate date range is not too large
+        range_days = (date_to - date_from).days
+        if range_days > MAX_DATE_RANGE_DAYS:
+            raise ValueError(f"Date range too large. Maximum allowed is {MAX_DATE_RANGE_DAYS} days (~{MAX_DATE_RANGE_DAYS // 365} years)")
     elif date_from_str or date_to_str:
         # Only one date provided - this is an error
         raise ValueError("Both date_from and date_to must be provided together, or neither")
