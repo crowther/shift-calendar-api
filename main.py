@@ -47,6 +47,9 @@ def get_date_range(date_from, date_to) -> tuple[datetime.date, datetime.date]:
             end_date = parse_date(date_to)
         except ValueError:
             raise ValueError("Invalid date format. Use YYYY-MM-DD")
+
+        if date_to < date_from:
+            raise ValueError("date_to must be greater than or equal to date_from")
     else:
         start_date, end_date = get_default_date_range()
     return start_date, end_date   
