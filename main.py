@@ -39,7 +39,7 @@ def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     date_to = today + datetime.timedelta(days=365)
     return date_from, date_to
 
-def get_date_range(date_from_str, date_to_str) -> tuple[datetime.date, datetime.date]:
+def get_date_range(date_from_str: Optional[str], date_to_str: Optional[str]) -> tuple[datetime.date, datetime.date]:
     # Use provided dates or default range
     if date_from_str and date_to_str:
         try:
@@ -56,12 +56,12 @@ def get_date_range(date_from_str, date_to_str) -> tuple[datetime.date, datetime.
 
 @app.get("/calendars/all_shifts.ics")
 def get_all_shifts(
-    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
-    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)")
+    date_from_str: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)", alias="date_from"),
+    date_to_str: Optional[str] = Query(None, description="End date (YYYY-MM-DD)", alias="date_to")
 ):
     """Generate calendar with all 5 shifts"""
     try:
-        date_from, date_to = get_date_range(date_from, date_to)
+        date_from, date_to = get_date_range(date_from_str, date_to_str)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -87,8 +87,8 @@ def get_all_shifts(
 @app.get("/calendars/shift{shift_numbers}.ics")
 def get_shift_calendar(
     shift_numbers: str,
-    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
-    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)")
+    date_from_str: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)", alias="date_from"),
+    date_to_str: Optional[str] = Query(None, description="End date (YYYY-MM-DD)", alias="date_to")
 ):
     """Generate calendar for one or more shifts (e.g., '1' or '1,3,5')"""
     try:
@@ -114,7 +114,7 @@ def get_shift_calendar(
         )
 
     try:
-        date_from, date_to = get_date_range(date_from, date_to)
+        date_from, date_to = get_date_range(date_from_str, date_to_str)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
