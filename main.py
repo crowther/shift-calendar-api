@@ -27,9 +27,9 @@ def parse_date(date_str: str) -> datetime.date:
 # Default date range: 1 year back to 1 year forward
 def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     today = datetime.date.today()
-    past = today - datetime.timedelta(days=365)
-    future = today + datetime.timedelta(days=365)
-    return past, future
+    date_from = today - datetime.timedelta(days=365)
+    date_to = today + datetime.timedelta(days=365)
+    return date_from, date_to
 
 @app.get("/calendars/all_shifts.ics")
 def get_all_shifts(
