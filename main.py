@@ -50,6 +50,9 @@ def get_date_range(date_from_str: Optional[str], date_to_str: Optional[str]) -> 
 
         if date_to < date_from:
             raise ValueError("date_to must be greater than or equal to date_from")
+    elif date_from_str or date_to_str:
+        # Only one date provided - this is an error
+        raise ValueError("Both date_from and date_to must be provided together, or neither")
     else:
         date_from, date_to = get_default_date_range()
     return date_from, date_to   
