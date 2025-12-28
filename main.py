@@ -3,6 +3,7 @@ import os
 import datetime
 from pathlib import Path
 from typing import Optional
+from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Response, Query
 from fastapi.staticfiles import StaticFiles
 
@@ -11,14 +12,21 @@ generator_path = os.getenv("GENERATOR_PATH", str(Path(__file__).parent.parent / 
 sys.path.insert(0, generator_path)
 import generator
 
+# Path to the template file
+TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    if not os.path.exists(TEMPLATE_FILE):
+        raise FileNotFoundError(f"Template file not found: {TEMPLATE_FILE}")
+    yield
+
 app = FastAPI(
     title="Shift Calendar API",
     description="Generate iCalendar feeds for shift schedules",
-    version="0.1.0"
+    version="0.1.0",
+    lifespan=lifespan
 )
-
-# Path to the template file
-TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "shift-calendar-generator" / "template.csv"))
 
 # Parse date from string (YYYY-MM-DD format)
 def parse_date(date_str: str) -> datetime.date:
