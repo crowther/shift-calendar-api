@@ -39,20 +39,20 @@ def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     date_to = today + datetime.timedelta(days=365)
     return date_from, date_to
 
-def get_date_range(date_from, date_to) -> tuple[datetime.date, datetime.date]:
+def get_date_range(date_from_str, date_to_str) -> tuple[datetime.date, datetime.date]:
     # Use provided dates or default range
-    if date_from and date_to:
+    if date_from_str and date_to_str:
         try:
-            start_date = parse_date(date_from)
-            end_date = parse_date(date_to)
+            date_from = parse_date(date_from_str)
+            date_to = parse_date(date_to_str)
         except ValueError:
             raise ValueError("Invalid date format. Use YYYY-MM-DD")
 
         if date_to < date_from:
             raise ValueError("date_to must be greater than or equal to date_from")
     else:
-        start_date, end_date = get_default_date_range()
-    return start_date, end_date   
+        date_from, date_to = get_default_date_range()
+    return date_from, date_to   
 
 @app.get("/calendars/all_shifts.ics")
 def get_all_shifts(
@@ -61,14 +61,14 @@ def get_all_shifts(
 ):
     """Generate calendar with all 5 shifts"""
     try:
-        start_date, end_date = get_date_range(date_from, date_to)
+        date_from, date_to = get_date_range(date_from, date_to)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     cal = generator.generate_calendar(
         template_file=TEMPLATE_FILE,
-        date_from=start_date,
-        date_to=end_date,
+        date_from=date_from,
+        date_to=date_to,
         selected_shifts=None  # All shifts
     )
 
@@ -111,14 +111,14 @@ def get_shift_calendar(
         )
 
     try:
-        start_date, end_date = get_date_range(date_from, date_to)
+        date_from, date_to = get_date_range(date_from, date_to)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
     cal = generator.generate_calendar(
         template_file=TEMPLATE_FILE,
-        date_from=start_date,
-        date_to=end_date,
+        date_from=date_from,
+        date_to=date_to,
         selected_shifts=selected_shifts
     )
 
