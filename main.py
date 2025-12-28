@@ -65,12 +65,15 @@ def get_all_shifts(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    cal = generator.generate_calendar(
-        template_file=TEMPLATE_FILE,
-        date_from=date_from,
-        date_to=date_to,
-        selected_shifts=None  # All shifts
-    )
+    try:
+        cal = generator.generate_calendar(
+            template_file=TEMPLATE_FILE,
+            date_from=date_from,
+            date_to=date_to,
+            selected_shifts=None  # All shifts
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate calendar: {str(e)}")
 
     return Response(
         content=cal.to_ical(),
@@ -115,12 +118,15 @@ def get_shift_calendar(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    cal = generator.generate_calendar(
-        template_file=TEMPLATE_FILE,
-        date_from=date_from,
-        date_to=date_to,
-        selected_shifts=selected_shifts
-    )
+    try:
+        cal = generator.generate_calendar(
+            template_file=TEMPLATE_FILE,
+            date_from=date_from,
+            date_to=date_to,
+            selected_shifts=selected_shifts
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to generate calendar: {str(e)}")
 
     filename = f"shift{shift_numbers}.ics"
 
