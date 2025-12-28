@@ -3,7 +3,7 @@ import os
 import datetime
 from pathlib import Path
 from typing import Optional
-from fastapi import FastAPI, Response, Query
+from fastapi import FastAPI, HTTPException, Response, Query
 from fastapi.staticfiles import StaticFiles
 
 # Add generator module to path
@@ -31,24 +31,28 @@ def get_default_date_range() -> tuple[datetime.date, datetime.date]:
     date_to = today + datetime.timedelta(days=365)
     return date_from, date_to
 
-@app.get("/calendars/all_shifts.ics")
-def get_all_shifts(
-    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
-    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)")
-):
-    """Generate calendar with all 5 shifts"""
+def get_date_range(date_from, date_to) -> tuple[datetime.date, datetime.date]:
     # Use provided dates or default range
     if date_from and date_to:
         try:
             start_date = parse_date(date_from)
             end_date = parse_date(date_to)
         except ValueError:
-            return Response(
-                content="Invalid date format. Use YYYY-MM-DD",
-                status_code=400
-            )
+            raise ValueError("Invalid date format. Use YYYY-MM-DD")
     else:
         start_date, end_date = get_default_date_range()
+    return start_date, end_date   
+
+@app.get("/calendars/all_shifts.ics")
+def get_all_shifts(
+    date_from: Optional[str] = Query(None, description="Start date (YYYY-MM-DD)"),
+    date_to: Optional[str] = Query(None, description="End date (YYYY-MM-DD)")
+):
+    """Generate calendar with all 5 shifts"""
+    try:
+        start_date, end_date = get_date_range(date_from, date_to)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     cal = generator.generate_calendar(
         template_file=TEMPLATE_FILE,
@@ -78,35 +82,27 @@ def get_shift_calendar(
 
         # Validate shift numbers
         if not selected_shifts:
-            return Response(
-                content="At least one shift must be specified",
-                status_code=400
+            raise HTTPException(
+                status_code=400,
+                detail="At least one shift must be specified"
             )
 
         if any(shift < 1 or shift > 5 for shift in selected_shifts):
-            return Response(
-                content="All shift numbers must be between 1 and 5",
-                status_code=400
+            raise HTTPException(
+                status_code=400,
+                detail="All shift numbers must be between 1 and 5"
             )
 
     except ValueError:
-        return Response(
-            content="Invalid shift numbers format. Use comma-separated integers (e.g., '1,3,5')",
-            status_code=400
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid shift numbers format. Use comma-separated integers (e.g., '1,3,5')"
         )
 
-    # Use provided dates or default range
-    if date_from and date_to:
-        try:
-            start_date = parse_date(date_from)
-            end_date = parse_date(date_to)
-        except ValueError:
-            return Response(
-                content="Invalid date format. Use YYYY-MM-DD",
-                status_code=400
-            )
-    else:
-        start_date, end_date = get_default_date_range()
+    try:
+        start_date, end_date = get_date_range(date_from, date_to)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     cal = generator.generate_calendar(
         template_file=TEMPLATE_FILE,
