@@ -18,10 +18,16 @@ TEMPLATE_FILE = os.getenv("TEMPLATE_FILE", str(Path(__file__).parent.parent / "s
 # Maximum date range in days (default: 5 years)
 MAX_DATE_RANGE_DAYS = int(os.getenv("MAX_DATE_RANGE_DAYS", "1825"))
 
+# Global cache for shift templates (loaded once at startup)
+shift_templates: generator.ShiftTemplates = None
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    global shift_templates
     if not os.path.exists(TEMPLATE_FILE):
         raise FileNotFoundError(f"Template file not found: {TEMPLATE_FILE}")
+    # Load shift templates once at startup
+    shift_templates = generator.load_shift_templates_from_file(TEMPLATE_FILE)
     yield
 
 app = FastAPI(
@@ -78,7 +84,7 @@ def get_all_shifts(
 
     try:
         cal = generator.generate_calendar(
-            template_file=TEMPLATE_FILE,
+            shift_templates=shift_templates,
             date_from=date_from,
             date_to=date_to,
             selected_shifts=None  # All shifts
@@ -131,7 +137,7 @@ def get_shift_calendar(
 
     try:
         cal = generator.generate_calendar(
-            template_file=TEMPLATE_FILE,
+            shift_templates=shift_templates,
             date_from=date_from,
             date_to=date_to,
             selected_shifts=selected_shifts
