@@ -4,15 +4,27 @@
     <title>Shift Calendar Subscriptions</title>
     <style>
         :root {
-            --bg-primary: #0d1117;
-            --bg-secondary: #161b22;
-            --bg-tertiary: #1f2937;
-            --text-primary: #e6edf3;
-            --text-secondary: #8b949e;
-            --accent-primary: #58a6ff;
-            --accent-secondary: #1f6feb;
-            --accent-hover: #79c0ff;
-            --border-color: #30363d;
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #fcfcfc;
+            --text-primary: #333;
+            --text-secondary: #666;
+            --text-tertiary: #6c757d;
+            --accent-primary: #3498db;
+            --accent-secondary: #2c3e50;
+            --accent-hover: #2980b9;
+            --border-color: #ddd;
+            --border-light: #ccc;
+            --shift1-bg: #fce8e6;
+            --shift1-border: #e74c3c;
+            --shift2-bg: #e8f4fc;
+            --shift2-border: #3498db;
+            --shift3-bg: #e8f8ef;
+            --shift3-border: #2ecc71;
+            --shift4-bg: #fef3e6;
+            --shift4-border: #f39c12;
+            --shift5-bg: #f2ebf7;
+            --shift5-border: #9b59b6;
         }
 
         * {
@@ -36,10 +48,6 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
         h2 {
@@ -123,7 +131,7 @@
         }
 
         .generate-btn {
-            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            background: var(--accent-primary);
             color: white;
             border: none;
             padding: 12px 24px;
@@ -132,16 +140,15 @@
             font-size: 1rem;
             font-weight: 600;
             margin-top: 1rem;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: background-color 0.2s ease;
         }
 
         .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3);
+            background-color: var(--accent-hover);
         }
 
         .generate-btn:active {
-            transform: translateY(0);
+            background-color: #21618c;
         }
 
         #custom-url {
@@ -155,7 +162,7 @@
         }
 
         #custom-url strong {
-            color: var(--accent-primary);
+            color: var(--text-primary);
         }
 
         ul {
@@ -194,7 +201,7 @@
         .copy-btn {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
-            color: var(--accent-primary);
+            color: var(--text-secondary);
             padding: 0.5rem 0.75rem;
             border-radius: 4px;
             cursor: pointer;
@@ -204,15 +211,85 @@
         }
 
         .copy-btn:hover {
-            background: var(--accent-primary);
+            background: var(--accent-secondary);
             color: white;
-            border-color: var(--accent-primary);
+            border-color: var(--accent-secondary);
         }
 
         .copy-btn.copied {
-            background: var(--accent-primary);
+            background: #2ecc71;
             color: white;
-            border-color: var(--accent-primary);
+            border-color: #2ecc71;
+        }
+
+        .shift1 {
+            background: var(--shift1-bg);
+            border-color: var(--shift1-border);
+        }
+
+        .shift1:hover {
+            background: var(--shift1-bg);
+            border-color: var(--shift1-border);
+        }
+
+        .shift1 h3 {
+            color: var(--shift1-border);
+        }
+
+        .shift2 {
+            background: var(--shift2-bg);
+            border-color: var(--shift2-border);
+        }
+
+        .shift2:hover {
+            background: var(--shift2-bg);
+            border-color: var(--shift2-border);
+        }
+
+        .shift2 h3 {
+            color: var(--shift2-border);
+        }
+
+        .shift3 {
+            background: var(--shift3-bg);
+            border-color: var(--shift3-border);
+        }
+
+        .shift3:hover {
+            background: var(--shift3-bg);
+            border-color: var(--shift3-border);
+        }
+
+        .shift3 h3 {
+            color: var(--shift3-border);
+        }
+
+        .shift4 {
+            background: var(--shift4-bg);
+            border-color: var(--shift4-border);
+        }
+
+        .shift4:hover {
+            background: var(--shift4-bg);
+            border-color: var(--shift4-border);
+        }
+
+        .shift4 h3 {
+            color: var(--shift4-border);
+        }
+
+        .shift5 {
+            background: var(--shift5-bg);
+            border-color: var(--shift5-border);
+        }
+
+        .shift5:hover {
+            background: var(--shift5-bg);
+            border-color: var(--shift5-border);
+        }
+
+        .shift5 h3 {
+            color: var(--shift5-border);
         }
     </style>
 </head>
@@ -229,7 +306,7 @@
         </div>
     </div>
 
-    <div class="calendar-link">
+    <div class="calendar-link shift1">
         <h3>Shift 1</h3>
         <div class="url-box">
             <a href="/calendars/shift1.ics" class="calendar-url">/calendars/shift1.ics</a>
@@ -237,7 +314,7 @@
         </div>
     </div>
 
-    <div class="calendar-link">
+    <div class="calendar-link shift2">
         <h3>Shift 2</h3>
         <div class="url-box">
             <a href="/calendars/shift2.ics" class="calendar-url">/calendars/shift2.ics</a>
@@ -245,7 +322,7 @@
         </div>
     </div>
 
-    <div class="calendar-link">
+    <div class="calendar-link shift3">
         <h3>Shift 3</h3>
         <div class="url-box">
             <a href="/calendars/shift3.ics" class="calendar-url">/calendars/shift3.ics</a>
@@ -253,7 +330,7 @@
         </div>
     </div>
 
-    <div class="calendar-link">
+    <div class="calendar-link shift4">
         <h3>Shift 4</h3>
         <div class="url-box">
             <a href="/calendars/shift4.ics" class="calendar-url">/calendars/shift4.ics</a>
@@ -261,7 +338,7 @@
         </div>
     </div>
 
-    <div class="calendar-link">
+    <div class="calendar-link shift5">
         <h3>Shift 5</h3>
         <div class="url-box">
             <a href="/calendars/shift5.ics" class="calendar-url">/calendars/shift5.ics</a>
